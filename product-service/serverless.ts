@@ -20,7 +20,20 @@ const serverlessConfiguration: AWS = {
     },
   },
   // import the function via paths
-  functions: { products, productById },
+  functions: {
+    products: {
+      ...products,
+      events: [
+        { http: { ...products.events[0].http, cors: true } }
+      ]
+    },
+    productById: {
+      ...productById,
+      events: [
+        { http: { ...productById.events[0].http, cors: true } }
+      ]
+    }
+  },
   package: { individually: true },
   custom: {
     esbuild: {
