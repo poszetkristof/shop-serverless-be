@@ -1,6 +1,5 @@
 import { DynamoDB, config } from 'aws-sdk';
-import { products } from '../mocks/data';
-import { TABLE_NAMES } from '../constants';
+import { products, stocks } from '../mocks/data';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 config.update({ region: process.env.AWS_REGION });
@@ -14,4 +13,5 @@ const populateTable = async <T extends DynamoDB.DocumentClient.PutItemInputAttri
   }
 }
 
-populateTable(TABLE_NAMES.PRODUCTS, products).catch((error) => console.error(error));
+populateTable('products', products).catch((error) => console.error(error));
+populateTable('stocks', stocks).catch((error) => console.error(error));
