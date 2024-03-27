@@ -1,5 +1,5 @@
 import { formatJSONResponse } from '@libs/api-gateway';
-import { products } from '../../../../mocks/data';
+import { products } from '../../../mocks/data';
 import { middyfy } from '@libs/lambda';
 
 import type { APIGatewayProxyEvent } from 'aws-lambda';

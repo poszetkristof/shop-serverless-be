@@ -8,13 +8,12 @@ const docClient = DynamoDBDocumentClient.from(dynamoDb);
 
 const scan = async () => {
   const command = new ScanCommand({ TableName: process.env.PRODUCTS_TABLE });
-  const products = await docClient.send(command);
-
-  return products;
+  const { Items } = await docClient.send(command);
+  return Items;
 }
 
 const getProductsList = async () => formatJSONResponse({
-  message: (await scan()).Items,
+  message: await scan(),
 });
 
 export const main = middyfy(getProductsList);
