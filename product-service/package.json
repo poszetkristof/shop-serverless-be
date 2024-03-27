@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "check:productById": "serverless invoke local --function productById --path ./mocks/getProductByIdPathParam.json",
     "check:products": "serverless invoke local --function products",
+    "check:createProduct": "serverless invoke local --function createProduct --path ./mocks/createProductBody.json",
     "check:db": "cross-env PRODUCTS_TABLE=products STOCKS_TABLE=stocks ts-node src/index.ts",
     "serverless:deploy": "sls deploy",
     "populateTable": "cross-env AWS_REGION=eu-west-1 ts-node utils/populateTable.ts"
@@ -18,7 +19,8 @@
     "@aws-sdk/client-dynamodb": "^3.540.0",
     "@aws-sdk/lib-dynamodb": "^3.540.0",
     "@middy/core": "^3.4.0",
-    "@middy/http-json-body-parser": "^3.4.0"
+    "@middy/http-json-body-parser": "^3.4.0",
+    "joi": "^17.12.2"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.0.0",
