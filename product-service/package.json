@@ -5,6 +5,9 @@
   "main": "serverless.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "check:productById": "serverless invoke local --function productById --path ./mocks/getProductByIdPathParam.json",
+    "check:products": "serverless invoke local --function products",
+    "check:db": "cross-env PRODUCTS_TABLE=products STOCKS_TABLE=stocks ts-node src/index.ts",
     "serverless:deploy": "sls deploy",
     "populateTable": "cross-env AWS_REGION=eu-west-1 ts-node utils/populateTable.ts"
   },
