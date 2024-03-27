@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { productById, products } from '@functions/index';
+import { productById, products, createProduct } from '@functions/index';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -17,6 +17,25 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      PRODUCTS_TABLE: 'products',
+      STOCKS_TABLE: 'stocks',
+    },
+    iam: {
+      role: {
+        statements: [{
+          Effect: "Allow",
+          Action: [
+            "dynamodb:DescribeTable",
+            "dynamodb:Query",
+            "dynamodb:Scan",
+            "dynamodb:GetItem",
+            "dynamodb:PutItem",
+            "dynamodb:UpdateItem",
+            "dynamodb:DeleteItem",
+          ],
+          Resource: 'arn:aws:dynamodb:eu-west-1:*:table/*',
+        }],
+      },
     },
   },
   // import the function via paths
@@ -31,6 +50,18 @@ const serverlessConfiguration: AWS = {
       ...productById,
       events: [
         { http: { ...productById.events[0].http, cors: true } }
+      ]
+    },
+    createProduct: {
+      ...createProduct,
+      events: [
+        { 
+          http: {
+            method: createProduct.events[0].http.method,
+            path: createProduct.events[0].http.path,
+            cors: true
+          }
+        }
       ]
     }
   },
