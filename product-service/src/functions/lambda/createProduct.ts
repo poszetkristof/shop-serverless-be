@@ -1,12 +1,17 @@
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { formatJSONResponse } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
+import type { Context } from 'aws-lambda';
 
 import DynamoDbService from 'src/database/DynamoDbService';
 import { schemas } from '../../utils/schema';
 import { ErrorMessages } from 'src/messages';
 
-const createProduct: ValidatedEventAPIGatewayProxyEvent<typeof schemas.json.createProduct> = async (event) => {
+const createProduct: ValidatedEventAPIGatewayProxyEvent<typeof schemas.json.createProduct> = async (
+  event, context: Context
+) => {
+  console.log('Incoming request: ', { event, context });
+
   const schema = schemas.joi.createProduct;
 
   try {
