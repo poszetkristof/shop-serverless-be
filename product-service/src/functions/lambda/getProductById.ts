@@ -1,8 +1,9 @@
 import { formatJSONResponse } from '@libs/api-gateway';
-import { products } from '../../../mocks/data';
 import { middyfy } from '@libs/lambda';
 
 import type { APIGatewayProxyEvent } from 'aws-lambda';
+import DynamoDbService from 'src/database/DynamoDbService';
+import { ErrorMessages } from 'src/messages';
 
 const getProductById = async (event: APIGatewayProxyEvent) => {
   const productId = event.pathParameters?.productId;
@@ -11,13 +12,17 @@ const getProductById = async (event: APIGatewayProxyEvent) => {
     return formatJSONResponse({ message: 'Missing productId param' }, 400);
   }
 
-  const product = products.find(product => product.id === productId);
+  try {
+    const product = await DynamoDbService.findById(productId);
 
-  if (!product) {
-    return formatJSONResponse({ message: 'Product not found' }, 404);
+    if (!product) {
+      return formatJSONResponse({ message: 'Product not found' }, 404);
+    }
+
+    return formatJSONResponse({ message: product });
+  } catch{
+    return formatJSONResponse({ message: ErrorMessages.InternalServerError }, 500);
   }
-
-  return formatJSONResponse({ message: product });
 };
 
 export const main = middyfy(getProductById);
