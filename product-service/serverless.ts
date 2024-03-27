@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { productById, products } from '@functions/index';
+import { productById, products, createProduct } from '@functions/index';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -50,6 +50,18 @@ const serverlessConfiguration: AWS = {
       ...productById,
       events: [
         { http: { ...productById.events[0].http, cors: true } }
+      ]
+    },
+    createProduct: {
+      ...createProduct,
+      events: [
+        { 
+          http: {
+            method: createProduct.events[0].http.method,
+            path: createProduct.events[0].http.path,
+            cors: true
+          }
+        }
       ]
     }
   },
