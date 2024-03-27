@@ -1,9 +1,10 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, ScanCommand, QueryCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 
 import { ProductDatabaseService } from "./ProductDatabaseService";
 import type { BaseProduct, Product, ProductWithoutId } from "src/types/product";
 import type { Stock } from "src/types/stock";
+import { randomUUID } from "crypto";
 
 class DynamoDbService implements ProductDatabaseService {
   private docClient: DynamoDBDocumentClient;
@@ -45,8 +46,26 @@ class DynamoDbService implements ProductDatabaseService {
     return { ...product, count: stock.count };
   }
 
-  save(_product: ProductWithoutId): Promise<Product> {
-    throw Error('not implemented');
+  async save(product: ProductWithoutId): Promise<Product> {
+    const { count, description, price, title } = product;
+    const id = randomUUID();
+    const baseProduct: BaseProduct = { id, description, price, title };
+    const stock: Stock = { product_id: id, count: product.count };
+
+    const commandProduct = new PutCommand({
+      TableName: process.env.PRODUCTS_TABLE,
+      Item: baseProduct,
+    });
+
+    const commandStock = new PutCommand({
+      TableName: process.env.STOCKS_TABLE,
+      Item: stock,
+    });
+
+    await this.docClient.send(commandProduct);
+    await this.docClient.send(commandStock);
+
+    return { ...baseProduct, count };
   }
 
   private async getItems<T>(command: ScanCommand): Promise<T> {
