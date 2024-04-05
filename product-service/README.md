@@ -12,8 +12,8 @@ The template contains lambda functions triggered by HTTP requests made on the pr
 ### Test Locally
 In order to test the lambda functions locally, run the following command:
 
-- `./invoke-function-locally.sh products`
-- `./invoke-function-locally.sh productById`
+- `npm run check:productById`
+- `npm run check:products`
 - *Note: because of middyfy wrapper, the function throws "Cannot read properties of undefined (reading 'Content-Type')" error. Remove middyfy while testing or mock it.*
 
 Check the [sls invoke local command documentation](https://www.serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/) for more information.
@@ -23,11 +23,8 @@ Check the [sls invoke local command documentation](https://www.serverless.com/fr
 Copy and replace your `url` - found in Serverless `deploy` command output - and `name` parameter in the following `curl` command in your terminal or in Postman to test your newly deployed application.
 
 ```
-curl --location --request POST 'https://myApiEndpoint/dev/hello' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "name": "Frederic"
-}'
+curl --location --request POST 'https://<check-the-exact-domain>/dev/products' \
+--header 'Content-Type: application/json'
 ```
 
 ## Template features
@@ -36,15 +33,16 @@ curl --location --request POST 'https://myApiEndpoint/dev/hello' \
 
 The project code base is mainly located within the `src` folder. This folder is divided in:
 
+- `database` - containing code base for your DynamoDB operations
 - `functions` - containing code base and configuration for your lambda functions
 - `libs` - containing shared code base between your lambdas
 
 ```
 .
 ├── src
-│   ├── functions               # Lambda configuration and source code folder
-│   │   ├── products
+│   ├── functions                  # Lambda configuration and source code folder
 │   │   │   ├── lambda             # lambda functions impl.
+|   |   |   ├── createProduct.ts   # `createProduct` lambda Serverless 
 │   │   │   ├── getProductById.ts  # `getProductById` lambda Serverless configuration
 │   │   │   ├── getProductsList.ts # `getProductsList` lambda Serverless configuration
 │   │   │   └── schema.ts          # lambda input event JSON-Schema
@@ -59,8 +57,7 @@ The project code base is mainly located within the `src` folder. This folder is 
 ├── package.json
 ├── serverless.ts               # Serverless service file
 ├── tsconfig.json               # Typescript compiler configuration
-├── tsconfig.paths.json         # Typescript paths
-└── webpack.config.js           # Webpack configuration
+└── tsconfig.paths.json         # Typescript paths
 ```
 
 ### 3rd party libraries
