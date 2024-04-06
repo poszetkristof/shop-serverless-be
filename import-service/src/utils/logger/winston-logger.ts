@@ -15,11 +15,10 @@ class WinstonLogger implements Logger {
 
     this.logger = createLogger({
       level: process.env.ENV_STAGE === 'prod' ? 'error' : 'info',
-      transports: [
-        new transports.Console({ format: this.format }),
-      ],
+      transports: [new transports.Console({ format: this.format })],
     });
   }
+
   logRequest(message: string) {
     this.logger.info(message);
   }
