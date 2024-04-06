@@ -1,10 +1,5 @@
-import { winstonLogger } from './winstonLogger';
-
-export interface ApiResponse {
-  statusCode: number;
-  headers: Object;
-  body: Object;
-}
+import { winstonLogger } from '../logger/winston-logger';
+import type { ApiResponse } from './types';
 
 const defaultHeaders = {
   'Access-Control-Allow-Methods': '*',
@@ -17,9 +12,7 @@ export const errorResponse = (err: Error, statusCode: number = 500): ApiResponse
 
   return {
     statusCode,
-    headers: {
-      ...defaultHeaders,
-    },
+    headers: { ...defaultHeaders },
     body: JSON.stringify({ message: err?.message ?? 'Something went wrong !!!' }),
   };
 };

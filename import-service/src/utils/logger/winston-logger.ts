@@ -1,9 +1,5 @@
 import { format, transports, createLogger } from 'winston';
-
-interface Logger {
-  logRequest: (message: string) => void;
-  logError: (message: string) => void;
-}
+import { Logger } from './logger';
 
 class WinstonLogger implements Logger {
   private readonly logger: any;
@@ -20,9 +16,7 @@ class WinstonLogger implements Logger {
     this.logger = createLogger({
       level: process.env.ENV_STAGE === 'prod' ? 'error' : 'info',
       transports: [
-        new transports.Console({
-          format: this.format,
-        }),
+        new transports.Console({ format: this.format }),
       ],
     });
   }
