@@ -1,6 +1,5 @@
 import csv from 'csv-parser';
-
-import { S3Client, GetObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { winstonLogger } from 'src/utils/logger/winston-logger';
 
 const { BUCKET_NAME, REGION } = process.env;
@@ -20,23 +19,39 @@ export const importFileParser = async (event) => {
 
     const { Body: s3Stream } = await s3Client.send(new GetObjectCommand(getObjectParams));
 
-    s3Stream
-      ?.pipe(csv())
-      .on('data', (data) => {
-        winstonLogger.logRequest(JSON.stringify(data));
-      })
-      .on('end', async () => {
-        winstonLogger.logRequest(`Copy from ${BUCKET_NAME}/${record.s3.object.key}`);
+    const csvData = [];
+    await new Promise((resolve, reject) => {
+      s3Stream
+        ?.pipe(csv())
+        .on('data', (data: never) => {
+          csvData.push(data);
+        })
+        .on('error', reject)
+        .on('end', resolve);
+    });
 
-        const copyObjectParams = {
-          Bucket: BUCKET_NAME,
-          CopySource: `${BUCKET_NAME}/${record.s3.object.key}`,
-          Key: record.s3.object.key.replace('uploaded', 'parsed'),
-        };
+    // Convert CSV data to JSON
+    const jsonData = JSON.stringify(csvData);
 
-        await s3Client.send(new CopyObjectCommand(copyObjectParams));
+    // Upload JSON data to 'parsed' folder
+    const putObjectParams = {
+      Bucket: BUCKET_NAME,
+      Key: record.s3.object.key.replace('uploaded', 'parsed').replace('.csv', '') + '.json',
+      Body: jsonData,
+    };
 
-        winstonLogger.logRequest(`Copied into ${BUCKET_NAME}/${record.s3.object.key.replace('uploaded', 'parsed')}`);
-      });
+    await s3Client.send(new PutObjectCommand(putObjectParams));
+
+    winstonLogger.logRequest(`Copied into ${BUCKET_NAME}/${record.s3.object.key.replace('uploaded', 'parsed')}`);
+
+    // Delete the original file
+    const deleteObjectParams = {
+      Bucket: BUCKET_NAME,
+      Key: record.s3.object.key,
+    };
+
+    await s3Client.send(new DeleteObjectCommand(deleteObjectParams));
+
+    winstonLogger.logRequest(`Deleted from ${BUCKET_NAME}/${record.s3.object.key}`);
   }
 };
