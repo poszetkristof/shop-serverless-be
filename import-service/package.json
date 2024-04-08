@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "check:importProductsFile": "serverless invoke local --function importProductsFile --path ./mocks/mockQueryString.json",
+    "check:importFileParser": "serverless invoke local --function importFileParser",
     "serverless:deploy": "sls deploy"
   },
   "engines": {
@@ -16,6 +17,7 @@
     "@aws-sdk/s3-request-presigner": "^3.550.0",
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
+    "csv-parser": "^3.0.0",
     "winston": "^3.13.0"
   },
   "devDependencies": {
