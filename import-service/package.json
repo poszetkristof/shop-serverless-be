@@ -7,13 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "check:importProductsFile": "serverless invoke local --function importProductsFile --path ./mocks/mockQueryString.json",
     "check:importFileParser": "serverless invoke local --function importFileParser",
-    "serverless:deploy": "sls deploy"
+    "serverless:deploy": "sls deploy",
+    "serverless:remove": "sls remove"
   },
   "engines": {
     "node": ">=14.15.0"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.550.0",
+    "@aws-sdk/client-sqs": "^3.554.0",
     "@aws-sdk/s3-request-presigner": "^3.550.0",
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",

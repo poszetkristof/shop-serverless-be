@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { productById, products, createProduct } from '@functions/index';
+import { productById, products, createProduct, catalogBatchProcess } from '@functions/index';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -19,6 +19,8 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       PRODUCTS_TABLE: 'products',
       STOCKS_TABLE: 'stocks',
+      CREATE_PRODUCT_TOPIC_SNS_ARN: "arn:aws:sns:eu-west-1:992382569213:createProductTopic",
+      CATALOG_ITEMS_QUEUE_ARN: "arn:aws:sqs:eu-west-1:992382569213:catalogItemsQueue",
     },
     iam: {
       role: {
@@ -34,7 +36,31 @@ const serverlessConfiguration: AWS = {
             "dynamodb:DeleteItem",
           ],
           Resource: 'arn:aws:dynamodb:eu-west-1:*:table/*',
-        }],
+        },
+        {
+          Effect: "Allow",
+          Action: ["sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"],
+          Resource: {
+            "Fn::GetAtt": ["catalogItemsQueue", "Arn"],
+          },
+        },
+        {
+          Effect: "Allow",
+          Action: [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents",
+            "logs:DescribeLogGroups",
+            "logs:DescribeLogStreams",
+          ],
+          Resource: "arn:aws:logs:*:*:*",
+        },
+        {
+          Effect: "Allow",
+          Action: "sns:Publish",
+          Resource: "arn:aws:sns:eu-west-1:992382569213:createProductTopic",
+        },
+        ],
       },
     },
   },
@@ -63,7 +89,8 @@ const serverlessConfiguration: AWS = {
           }
         }
       ]
-    }
+    },
+    catalogBatchProcess
   },
   package: { individually: true },
   custom: {
@@ -78,6 +105,30 @@ const serverlessConfiguration: AWS = {
       concurrency: 10,
     },
   },
+  resources: {
+    Resources: {
+      catalogItemsQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'catalogItemsQueue',
+        },
+      },
+      createProductTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'createProductTopic',
+        },
+      },
+      createProductTopicSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'poszetrj@gmail.com',
+          Protocol: 'email',
+          TopicArn: { 'Ref': 'createProductTopic' },
+        },
+      },
+    }
+  }
 };
 
 module.exports = serverlessConfiguration;

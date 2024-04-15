@@ -20,6 +20,7 @@ const serverlessConfiguration: AWS = {
       BUCKET_NAME: 'bucket-import-products-file-hw5',
       FOLDER_NAME: 'uploaded',
       REGION: 'eu-west-1',
+      SQS_URL: 'https://sqs.eu-west-1.amazonaws.com/992382569213/catalogItemsQueue'
     },
     iam: {
       role: {
@@ -33,6 +34,11 @@ const serverlessConfiguration: AWS = {
             Effect: 'Allow',
             Action: 's3:*',
             Resource: ['arn:aws:s3:::bucket-import-products-file-hw5/*'],
+          },
+          {
+            Effect: "Allow",
+            Action: ["sqs:SendMessage", "sqs:ReceiveMessage", "sqs:GetQueueAttributes"],
+            Resource: "arn:aws:sqs:eu-west-1:992382569213:catalogItemsQueue",
           },
         ],
       },

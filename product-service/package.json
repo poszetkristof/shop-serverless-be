@@ -10,6 +10,7 @@
     "check:createProduct": "serverless invoke local --function createProduct --path ./mocks/createProductBody.json",
     "check:db": "cross-env PRODUCTS_TABLE=products STOCKS_TABLE=stocks ts-node src/index.ts",
     "serverless:deploy": "sls deploy",
+    "serverless:remove": "sls remove",
     "populateTable": "cross-env AWS_REGION=eu-west-1 ts-node utils/populateTable.ts"
   },
   "engines": {
@@ -17,6 +18,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.540.0",
+    "@aws-sdk/client-sns": "^3.554.0",
+    "@aws-sdk/client-sqs": "^3.554.0",
     "@aws-sdk/lib-dynamodb": "^3.540.0",
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
