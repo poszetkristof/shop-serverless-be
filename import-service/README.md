@@ -54,3 +54,8 @@ npm run check:importFileParser
         }
     ]
     ```
+  - in order to use **SQS, SNS**, might need to set up using AWS console:
+    - Amazon SQS --> Queues --> catalogItemsQueue --> select SNS subscription --> `Subscribe to Amazon SNS Topic`
+    - Amazon SNS --> Topics --> click createProductTopic --> if no subscriptions --> Create Subscription --> Select subscription --> edit fields:
+      - protocol: Amazon SQS
+      - endpoint: select the one which AWS offers (e.g. `arn:aws:sqs:eu-west-1:992382569213:catalogItemsQueue`)
