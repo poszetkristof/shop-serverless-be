@@ -49,8 +49,8 @@ class DynamoDbService implements ProductDatabaseService {
   async save(product: ProductWithoutId): Promise<Product> {
     const { count, description, price, title } = product;
     const id = randomUUID();
-    const baseProduct: BaseProduct = { id, description, price, title };
-    const stock: Stock = { product_id: id, count: product.count };
+    const baseProduct: BaseProduct = { id, description, price: +price, title };
+    const stock: Stock = { product_id: id, count: +product.count };
 
     const commandProduct = new PutCommand({
       TableName: process.env.PRODUCTS_TABLE,
