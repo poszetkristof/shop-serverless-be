@@ -8,7 +8,10 @@ const decodeCredentials = (encodedCredentials: string): [string, string] => {
   return buffer.toString('utf8').split(':') as [string, string];
 };
 
-const basicAuthorizer = async ({ authorizationToken, methodArn }: APIGatewayTokenAuthorizerEvent): Promise<CustomAuthorizerResult> => {
+const basicAuthorizer = async ({
+  authorizationToken,
+  methodArn,
+}: APIGatewayTokenAuthorizerEvent): Promise<CustomAuthorizerResult> => {
   if (!authorizationToken) {
     winstonLogger.logError('Authorization header not provided.');
     throw new Error('Unauthorized');
@@ -20,7 +23,7 @@ const basicAuthorizer = async ({ authorizationToken, methodArn }: APIGatewayToke
   const effect = process.env[username] === password ? EFFECTS.ALLOW : EFFECTS.DENY;
 
   if (effect === EFFECTS.DENY) {
-    winstonLogger.logError(`Access is denied for user ${username}.`)
+    winstonLogger.logError(`Access is denied for user ${username}.`);
   }
   return generatePolicy(encodedCredentials, effect, methodArn);
 };
