@@ -22,6 +22,10 @@ functions:
     handler: dist/main.handler
     events:
       - http:
+          method: ANY
+          path: /
+          cors: true
+      - http:
           path: '/{proxy+}'
           method: 'ANY'
           cors: true
