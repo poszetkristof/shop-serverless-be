@@ -10,13 +10,6 @@ provider:
     minimumCompressionSize: 1024
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
-  iam:
-    role:
-      statements:
-        - Effect: 'Allow'
-          Action:
-            - 'execute-api:Invoke'
-          Resource: '*'
 functions:
   app:
     handler: dist/main.handler
