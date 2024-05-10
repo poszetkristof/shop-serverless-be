@@ -8,6 +8,8 @@
 $ npm install
 ```
 
+Execute the SQL scripts from `initdb.sql`.
+
 ## Important notes
 - all dependencies were updated on May 9, 2025
 - Node version used locally: `v21.6.2`
