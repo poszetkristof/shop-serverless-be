@@ -5,6 +5,8 @@ import { AppModule } from './app.module';
 
 let server: Handler;
 
+import 'dotenv/config';
+
 async function bootstrap(): Promise<Handler> {
   const app = await NestFactory.create(AppModule);
 
