@@ -1,0 +1,31 @@
+service: rs-cart-api-kr1-nestjs-app
+frameworkVersion: '3'
+useDotenv: true
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: eu-west-1
+  apiGateway:
+    minimumCompressionSize: 1024
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+    DB_HOST: ${env:DB_HOST}
+    DB_PORT: ${env:DB_PORT}
+    DB_NAME: ${env:DB_NAME}
+    DB_USER: ${env:DB_USER}
+    DB_PASSWORD: ${env:DB_PASSWORD}
+functions:
+  app:
+    handler: dist/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+          cors: true
+      - http:
+          path: '/{proxy+}'
+          method: 'ANY'
+          cors: true
